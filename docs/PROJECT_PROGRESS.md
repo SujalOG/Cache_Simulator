@@ -53,7 +53,7 @@ This document serves as the single source of truth for the architecture, impleme
 | Phase | Description | Status | Verification Target |
 |---|---|---|---|
 | **Phase 1** | **Project Setup, Environment, Dependencies & Skeleton** | 🟢 Completed | Environment active, dependencies installed, smoke tests pass |
-| **Phase 2** | **Core Caching Engine (LRU, LFU, TTL, CacheNode)** | ⚪ Pending | Custom DLL, $O(1)$ LRU & LFU, TTL unit tests 100% pass |
+| **Phase 2** | **Core Caching Engine (LRU, LFU, TTL, CacheNode)** | 🟢 Completed | Custom DLL, $O(1)$ LRU & LFU, TTL unit tests 100% pass (27/27) |
 | **Phase 3** | **Distributed Layer (Consistent Hashing, Virtual Nodes, Failover)** | ⚪ Pending | Uniform ring distribution, binary search, failover re-routing |
 | **Phase 4** | **Simulation Engine & Experiment Lab (Workloads, DB, Redis, 6 Experiments)** | ⚪ Pending | Zipfian skew verified, latency percentiles, Redis comparative runs |
 | **Phase 5** | **Flask REST API Layer** | ⚪ Pending | REST endpoints responding with JSON simulation data |
@@ -125,14 +125,21 @@ This document serves as the single source of truth for the architecture, impleme
 | Test File | Description | Results |
 |---|---|---|
 | `backend/tests/test_smoke.py` | Package structure & test runner validation | ✅ **PASSED** (2/2 tests in 0.14s) |
+| `backend/tests/test_dll.py` | Handcrafted Doubly Linked List & Node primitives | ✅ **PASSED** (4/4 tests in 0.03s) |
+| `backend/tests/test_lru.py` | $O(1)$ LRU Cache (eviction, recency updates, overwrite) | ✅ **PASSED** (7/7 tests in 0.04s) |
+| `backend/tests/test_lfu.py` | $O(1)$ LFU Cache (frequency promotion, LRU tie-breaking) | ✅ **PASSED** (7/7 tests in 0.04s) |
+| `backend/tests/test_ttl.py` | TTL expiration & lazy eviction verification | ✅ **PASSED** (3/3 tests in 0.02s) |
+| `backend/tests/test_cache_node.py` | CacheNode stats tracking, utilization, failure/recovery | ✅ **PASSED** (4/4 tests in 0.02s) |
+| **Total Phase 2 Test Suite** | **All core engine primitives & eviction algorithms** | ✅ **27/27 PASSED (0.19s)** |
 
 ---
 
 ## 5. Next Immediate Steps
-1. **Phase 2: Core Caching Engine Implementation**:
-   - Build handcrafted `dll.py` (Doubly Linked List and Node primitives).
-   - Build `lru_cache.py` ($O(1)$ LRU with HashMap + DLL).
-   - Build `lfu_cache.py` ($O(1)$ LFU with Frequency Buckets + DLL + min-frequency tracking).
-   - Build `cache_node.py` (TTL expiration, statistics tracking, and policy interface).
-   - Write comprehensive unit tests in `backend/tests/test_lru.py`, `backend/tests/test_lfu.py`, `backend/tests/test_ttl.py`.
+1. **Commit & Push Phase 2 to GitHub**:
+   - Push stable Phase 2 implementation to `origin/main`.
+2. **Phase 3: Distributed Routing Layer Implementation**:
+   - Build `hash_ring.py`: Consistent Hash Ring with 32-bit MD5 hashing, virtual node replication, and clockwise `bisect` search.
+   - Build `modulo_ring.py`: Naive Modulo hashing ring for rebalancing churn comparison.
+   - Build `cluster.py`: CacheCluster managing physical nodes, ring routing, and clockwise successor failover when nodes fail.
+   - Write comprehensive unit tests in `backend/tests/test_hash_ring.py` and `backend/tests/test_cluster.py`.
    - Run pytest and verify 100% test pass rate.
