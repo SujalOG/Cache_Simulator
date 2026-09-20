@@ -74,7 +74,14 @@ class RedisBenchmarkRunner:
         try:
             self._client.flushdb()
             self._client.config_resetstat()
-            self.configure(maxmemory_bytes=1048576, policy=policy)
+            # Redis startup overhead is ~1MB; ensure maxmemory is comfortably above it to permit keys and evictions
+            try:
+                mem_info = self._client.info("memory")
+                base_overhead = mem_info.get("used_memory_startup", 1000000)
+            except Exception:
+                base_overhead = 1000000
+            target_mem = max(base_overhead + 600000, 2097152)
+            self.configure(maxmemory_bytes=target_mem, policy=policy)
 
             latencies: List[float] = []
             hits = 0
@@ -133,5 +140,6 @@ class RedisBenchmarkRunner:
             return {
                 "available": False,
                 "error": str(e),
+                "message": f"Redis execution error: {str(e)}",
                 "total_requests": len(requests)
             }
