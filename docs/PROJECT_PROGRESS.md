@@ -55,7 +55,7 @@ This document serves as the single source of truth for the architecture, impleme
 | **Phase 1** | **Project Setup, Environment, Dependencies & Skeleton** | 🟢 Completed | Environment active, dependencies installed, smoke tests pass |
 | **Phase 2** | **Core Caching Engine (LRU, LFU, TTL, CacheNode)** | 🟢 Completed | Custom DLL, $O(1)$ LRU & LFU, TTL unit tests 100% pass (27/27) |
 | **Phase 3** | **Distributed Layer (Consistent Hashing, Virtual Nodes, Failover)** | 🟢 Completed | Uniform ring distribution, binary search, failover re-routing (37/37) |
-| **Phase 4** | **Simulation Engine & Experiment Lab (Workloads, DB, Redis, 6 Experiments)** | ⚪ Pending | Zipfian skew verified, latency percentiles, Redis comparative runs |
+| **Phase 4** | **Simulation Engine & Experiment Lab (Workloads, DB, Redis, 6 Experiments)** | 🟢 Completed | Zipfian skew verified, latency percentiles, 6 canonical experiments (49/49) |
 | **Phase 5** | **Flask REST API Layer** | ⚪ Pending | REST endpoints responding with JSON simulation data |
 | **Phase 6** | **React Dashboard (Playground & 6 Benchmark Suites)** | ⚪ Pending | Responsive dark-mode UI with live charts and failure injection |
 | **Phase 7** | **Docker Orchestration & Interview Deep-Dive Guide** | ⚪ Pending | Single `docker compose up`, complete interview preparation guide |
@@ -132,19 +132,21 @@ This document serves as the single source of truth for the architecture, impleme
 | `backend/tests/test_cache_node.py` | CacheNode stats tracking, utilization, failure/recovery | ✅ **PASSED** (4/4 tests in 0.02s) |
 | `backend/tests/test_hash_ring.py` | Consistent Hashing, 100 vnodes uniformity, successor failover, modulo comparison | ✅ **PASSED** (6/6 tests in 0.05s) |
 | `backend/tests/test_cluster.py` | Multi-node routing, node failure injection, stats aggregation | ✅ **PASSED** (4/4 tests in 0.04s) |
-| **Total Test Suite** | **Phases 1, 2, and 3 fully covered** | ✅ **37/37 PASSED (0.16s)** |
+| `backend/tests/test_workload.py` | Zipfian sampler skew (YCSB standard), random and sequential workloads | ✅ **PASSED** (3/3 tests in 0.03s) |
+| `backend/tests/test_simulation.py` | Simulated DB read/write, MetricsCollector percentiles, end-to-end engine | ✅ **PASSED** (3/3 tests in 0.05s) |
+| `backend/tests/test_experiments.py` | All 6 canonical benchmark experiments validated | ✅ **PASSED** (6/6 tests in 5.20s) |
+| **Total Test Suite** | **Phases 1, 2, 3, and 4 fully covered** | ✅ **49/49 PASSED (5.70s)** |
 
 ---
 
 ## 5. Next Immediate Steps
-1. **Commit & Push Phase 3 to GitHub**:
-   - Push stable Phase 3 implementation to `origin/main`.
-2. **Phase 4: Experiment Lab & Simulation Engine Implementation**:
-   - Build `backend/simulator/db.py`: Simulated database backing store with latency distribution.
-   - Build `backend/simulator/workload.py`: Workload generator (Random, Hot-Keys with Zipfian skew, Sequential) with configurable read/write ratios.
-   - Build `backend/simulator/metrics.py`: Accurate statistical aggregation (Avg, Min, Max, P50, P90, P95, P99 latency percentiles, hit/miss rate, node load distribution).
-   - Build `backend/simulator/engine.py`: Simulation runner executing workloads using the hybrid deterministic latency model.
-   - Build `backend/simulator/redis_client.py`: Real Redis benchmark runner using connection pooling for baseline comparisons.
-   - Build `backend/simulator/experiments.py`: Suite of 6 canonical pre-packaged experiments.
-   - Write comprehensive unit tests in `backend/tests/test_workload.py` and `backend/tests/test_simulation.py`.
+1. **Commit & Push Phase 4 to GitHub**:
+   - Push stable Phase 4 implementation to `origin/main`.
+2. **Phase 5: Flask REST API Layer Implementation**:
+   - Build `backend/app.py` exposing:
+     - `POST /api/simulate`: Interactive custom simulation endpoint.
+     - `POST /api/experiments/run`: Runner for any of the 6 canonical experiments.
+     - `GET /api/experiments/list`: Metadata and parameters for all 6 experiments.
+     - `GET /api/health`: System health and live Redis connectivity check.
+   - Write API integration tests in `backend/tests/test_api.py`.
    - Run pytest and verify 100% test pass rate.
