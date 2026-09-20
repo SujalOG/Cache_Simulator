@@ -56,7 +56,7 @@ This document serves as the single source of truth for the architecture, impleme
 | **Phase 2** | **Core Caching Engine (LRU, LFU, TTL, CacheNode)** | 🟢 Completed | Custom DLL, $O(1)$ LRU & LFU, TTL unit tests 100% pass (27/27) |
 | **Phase 3** | **Distributed Layer (Consistent Hashing, Virtual Nodes, Failover)** | 🟢 Completed | Uniform ring distribution, binary search, failover re-routing (37/37) |
 | **Phase 4** | **Simulation Engine & Experiment Lab (Workloads, DB, Redis, 6 Experiments)** | 🟢 Completed | Zipfian skew verified, latency percentiles, 6 canonical experiments (49/49) |
-| **Phase 5** | **Flask REST API Layer** | ⚪ Pending | REST endpoints responding with JSON simulation data |
+| **Phase 5** | **Flask REST API Layer** | 🟢 Completed | REST endpoints verified via Flask integration tests (57/57) |
 | **Phase 6** | **React Dashboard (Playground & 6 Benchmark Suites)** | ⚪ Pending | Responsive dark-mode UI with live charts and failure injection |
 | **Phase 7** | **Docker Orchestration & Interview Deep-Dive Guide** | ⚪ Pending | Single `docker compose up`, complete interview preparation guide |
 
@@ -135,18 +135,21 @@ This document serves as the single source of truth for the architecture, impleme
 | `backend/tests/test_workload.py` | Zipfian sampler skew (YCSB standard), random and sequential workloads | ✅ **PASSED** (3/3 tests in 0.03s) |
 | `backend/tests/test_simulation.py` | Simulated DB read/write, MetricsCollector percentiles, end-to-end engine | ✅ **PASSED** (3/3 tests in 0.05s) |
 | `backend/tests/test_experiments.py` | All 6 canonical benchmark experiments validated | ✅ **PASSED** (6/6 tests in 5.20s) |
-| **Total Test Suite** | **Phases 1, 2, 3, and 4 fully covered** | ✅ **49/49 PASSED (5.70s)** |
+| `backend/tests/test_api.py` | Flask REST API endpoints (`/simulate`, `/experiments`, `/health`, error handling) | ✅ **PASSED** (8/8 tests in 0.35s) |
+| **Total Test Suite** | **Phases 1, 2, 3, 4, and 5 fully covered** | ✅ **57/57 PASSED (9.62s)** |
 
 ---
 
 ## 5. Next Immediate Steps
-1. **Commit & Push Phase 4 to GitHub**:
-   - Push stable Phase 4 implementation to `origin/main`.
-2. **Phase 5: Flask REST API Layer Implementation**:
-   - Build `backend/app.py` exposing:
-     - `POST /api/simulate`: Interactive custom simulation endpoint.
-     - `POST /api/experiments/run`: Runner for any of the 6 canonical experiments.
-     - `GET /api/experiments/list`: Metadata and parameters for all 6 experiments.
-     - `GET /api/health`: System health and live Redis connectivity check.
-   - Write API integration tests in `backend/tests/test_api.py`.
-   - Run pytest and verify 100% test pass rate.
+1. **Commit & Push Phase 5 to GitHub**:
+   - Push stable Phase 5 implementation to `origin/main`.
+2. **Phase 6: React Dashboard Implementation**:
+   - Initialize Vite + React project in `frontend/`.
+   - Install dependencies: `tailwindcss`, `postcss`, `autoprefixer`, `lucide-react`, `recharts`, `axios`.
+   - Build components:
+     - `Navbar`: Header, backend status, Redis live status indicator.
+     - `MetricsCards`: Clean KPI cards for Hit Rate, Miss Rate, Requests, Avg Latency, P95 Latency, Evictions.
+     - `Charts`: Hit/Miss distribution pie/bar, Node load distribution bar chart, Latency percentiles chart.
+     - `CustomPlayground`: Interactive control panel with sliders for policy, nodes, capacity, requests, pattern, read/write ratio, and node failure injection toggle.
+     - `BenchmarkSuite`: 1-click execution cards for each of the 6 canonical experiments with visual comparative charts and interview takeaways.
+   - Verify build and preview.
