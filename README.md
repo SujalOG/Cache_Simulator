@@ -126,7 +126,3 @@ npm run dev
 Open `http://localhost:3000` in your browser.
 
 ---
-
-## 📚 Technical Interview Deep-Dive
-
-For a complete breakdown of algorithms, mathematical proofs, time/space complexities, and sample interview questions, see **[`docs/INTERVIEW_GUIDE.md`](docs/INTERVIEW_GUIDE.md)**.
